@@ -158,14 +158,16 @@ const ProductCard: React.FC<{
     </div>
 );
 
-const BasketModal: React.FC<{
+interface BasketModalProps {
     isOpen: boolean;
     onClose: () => void;
     basketItems: Product[];
     onRemoveItem: (id: string) => void;
     onSubmit: (formData: any) => void;
     onClear: () => void;
-}> = ({ isOpen, onClose, basketItems, onRemoveItem, onSubmit, onClear }) => {
+}
+
+const BasketModal: React.FC<BasketModalProps> = ({ isOpen, onClose, basketItems, onRemoveItem, onSubmit, onClear }) => {
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
     const [notes, setNotes] = useState('');
@@ -354,7 +356,7 @@ const categoryIcons: Record<string, React.ReactNode> = {
 };
 
 // --- Modals ---
-export const ProductDetailModal: React.FC<{ 
+interface ProductDetailModalProps { 
     product: Product | null; 
     isOpen: boolean; 
     onClose: () => void;
@@ -362,7 +364,9 @@ export const ProductDetailModal: React.FC<{
     onEdit: () => void;
     onOrder: () => void;
     onSwitchProduct: (p: Product) => void;
-}> = ({ product, isOpen, onClose, isAdmin, onEdit, onOrder, onSwitchProduct }) => {
+}
+
+export const ProductDetailModal = ({ product, isOpen, onClose, isAdmin, onEdit, onOrder, onSwitchProduct }: ProductDetailModalProps) => {
     // Access context to find related products
     const { products } = useContext(AppContext);
     
@@ -628,7 +632,7 @@ export const ProductDetailModal: React.FC<{
     );
 };
 
-const EditProductModal: React.FC<{
+interface EditProductModalProps {
     product: Product | null;
     isOpen: boolean;
     onClose: () => void;
@@ -636,7 +640,9 @@ const EditProductModal: React.FC<{
     onDelete: (id: string) => void;
     categories: string[];
     initialSector?: string;
-}> = ({ product, isOpen, onClose, onSave, onDelete, categories, initialSector }) => {
+}
+
+const EditProductModal = ({ product, isOpen, onClose, onSave, onDelete, categories, initialSector }: EditProductModalProps) => {
     // ... (This component implementation remains consistent, ensuring it matches previous definition)
     const initialFormState: Omit<Product, 'id'> = {
         name: '',
@@ -1055,7 +1061,7 @@ const Products: React.FC = () => {
     }, [productsInScope]);
 
     // Sorted Derived Data for "Fixed Hierarchy"
-    const availableCategories = useMemo(() => {
+    const availableCategories = useMemo<string[]>(() => {
         if (!selectedSector) return [];
         const sectorProducts = products.filter(p => p.sector === selectedSector);
         return Array.from(new Set(sectorProducts.map(p => p.category))).sort();
@@ -1100,9 +1106,10 @@ const Products: React.FC = () => {
 
         // Apply Spec Filters
         Object.entries(activeFilters).forEach(([label, values]) => {
-            if (values.length > 0) {
+            const vals = values as string[];
+            if (vals.length > 0) {
                 filtered = filtered.filter(p => 
-                    p.specifications.some(s => s.label === label && values.includes(s.value))
+                    p.specifications.some(s => s.label === label && vals.includes(s.value))
                 );
             }
         });
@@ -1226,8 +1233,8 @@ const Products: React.FC = () => {
 
     // Filter Logic
     const toggleFilter = (label: string, value: string) => {
-        setActiveFilters(prev => {
-            const current = prev[label] || [];
+        setActiveFilters((prev: Record<string, string[]>) => {
+            const current: string[] = prev[label] || [];
             const updated = current.includes(value) 
                 ? current.filter(v => v !== value) 
                 : [...current, value];
@@ -1375,7 +1382,7 @@ const Products: React.FC = () => {
     const isFiltering = searchTerm !== '' || manualFilterActive;
     
     // Check if any filters are currently active (values selected)
-    const hasActiveFilters = Object.values(activeFilters).some(v => v.length > 0);
+    const hasActiveFilters = Object.values(activeFilters).some((v: string[]) => v.length > 0);
 
     // Determine if we should show the filter sidebar
     // Show sidebar when we are in Category view (Aisle) or ItemGroup View (Shelf) or Product View

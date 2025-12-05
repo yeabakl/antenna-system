@@ -1,7 +1,12 @@
 
 import React, { useContext, useMemo, useState } from 'react';
 import { AppContext } from '../App';
-import { ClipboardListIcon, CurrencyDollarIcon, UsersIcon, CheckCircleIcon, AcademicCapIcon, EnvelopeIcon, ClipboardCheckIcon, DocumentArrowDownIcon, FolderIcon, FileIcon, FileTextIcon, ChevronRightIcon, FilePdfIcon } from './icons';
+import { 
+    ClipboardListIcon, CurrencyDollarIcon, UsersIcon, CheckCircleIcon, 
+    AcademicCapIcon, EnvelopeIcon, ClipboardCheckIcon, DocumentArrowDownIcon, 
+    FolderIcon, FileIcon, FileTextIcon, ChevronRightIcon, FilePdfIcon,
+    ShoppingCartIcon, ClockIcon, ArchiveIcon
+} from './icons';
 import FilePreviewModal from './FilePreviewModal';
 
 const DashboardStatCard: React.FC<{
@@ -10,14 +15,15 @@ const DashboardStatCard: React.FC<{
     icon: React.ReactNode;
     action: () => void;
     actionLabel: string;
-}> = ({ title, value, icon, action, actionLabel }) => (
-    <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-blue-500 transition-transform hover:-translate-y-1">
+    borderClass?: string;
+}> = ({ title, value, icon, action, actionLabel, borderClass = "border-blue-500" }) => (
+    <div className={`bg-white rounded-xl shadow-lg p-6 border-l-4 ${borderClass} transition-transform hover:-translate-y-1`}>
         <div className="flex items-start justify-between mb-4">
             <div>
                 <p className="text-gray-500 text-sm font-medium">{title}</p>
                 <h3 className="text-3xl font-bold text-gray-800 mt-1">{value}</h3>
             </div>
-            <div className="p-3 bg-blue-50 rounded-full">
+            <div className="p-3 bg-gray-50 rounded-full">
                 {icon}
             </div>
         </div>
@@ -28,6 +34,24 @@ const DashboardStatCard: React.FC<{
             {actionLabel} <ChevronRightIcon className="w-4 h-4" />
         </button>
     </div>
+);
+
+const QuickActionButton: React.FC<{ 
+    label: string; 
+    icon: React.ReactNode; 
+    onClick: () => void; 
+    bgClass: string;
+    textClass: string;
+}> = ({ label, icon, onClick, bgClass, textClass }) => (
+    <button 
+        onClick={onClick}
+        className="flex items-center gap-3 px-5 py-4 bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-blue-100 transition-all group text-left w-full"
+    >
+        <div className={`p-3 rounded-lg ${bgClass} ${textClass} group-hover:scale-110 transition-transform`}>
+            {icon}
+        </div>
+        <span className="font-semibold text-gray-700 group-hover:text-gray-900 text-sm md:text-base">{label}</span>
+    </button>
 );
 
 const Dashboard: React.FC = () => {
@@ -102,39 +126,122 @@ const Dashboard: React.FC = () => {
         }
     };
 
+    // Quick Actions Handlers
+    const handleCreateOrder = () => navigateTo('orders', 'neworder');
+    const handleAssignTask = () => navigateTo('tasks');
+    const handleAddContact = () => navigateTo('contacts');
+    const handleRegisterTraining = () => navigateTo('training');
+    const handleAddLetter = () => navigateTo('letters');
+
     return (
         <div className="container mx-auto p-4 sm:p-6 lg:p-8 animate-fade-in">
-            <h1 className="text-3xl font-bold text-gray-800 mb-6">Dashboard</h1>
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">Dashboard</h1>
+            <p className="text-gray-500 mb-8">Welcome to Antenna Manufacturing & Business Consultancy</p>
 
-            {/* Stat Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-6 mb-8">
+            {/* Quick Actions */}
+            <div className="mb-10">
+                <h2 className="text-lg font-bold text-gray-700 mb-4">Quick Actions</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                    <QuickActionButton 
+                        label="Create New Order" 
+                        icon={<ShoppingCartIcon className="w-6 h-6"/>} 
+                        onClick={handleCreateOrder} 
+                        bgClass="bg-blue-50" textClass="text-blue-600" 
+                    />
+                    <QuickActionButton 
+                        label="Assign New Task" 
+                        icon={<ClipboardCheckIcon className="w-6 h-6"/>} 
+                        onClick={handleAssignTask} 
+                        bgClass="bg-teal-50" textClass="text-teal-600" 
+                    />
+                    <QuickActionButton 
+                        label="Add New Contact" 
+                        icon={<UsersIcon className="w-6 h-6"/>} 
+                        onClick={handleAddContact} 
+                        bgClass="bg-indigo-50" textClass="text-indigo-600" 
+                    />
+                    <QuickActionButton 
+                        label="Register for Training" 
+                        icon={<AcademicCapIcon className="w-6 h-6"/>} 
+                        onClick={handleRegisterTraining} 
+                        bgClass="bg-purple-50" textClass="text-purple-600" 
+                    />
+                    <QuickActionButton 
+                        label="Add New Letter" 
+                        icon={<EnvelopeIcon className="w-6 h-6"/>} 
+                        onClick={handleAddLetter} 
+                        bgClass="bg-orange-50" textClass="text-orange-600" 
+                    />
+                </div>
+            </div>
+
+            {/* Dashboard Stat Cards */}
+            <h2 className="text-lg font-bold text-gray-700 mb-4">Operational Overview</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
                 <DashboardStatCard
                     title="In Manufacturing"
                     value={inManufacturingCount}
                     icon={<ClipboardListIcon className="w-8 h-8 text-yellow-500" />}
                     action={() => navigateTo('orders', 'manufacturing')}
                     actionLabel="View Orders"
+                    borderClass="border-yellow-500"
                 />
                  <DashboardStatCard
                     title="Ready for Completion"
                     value={readyForCompletionCount}
-                    icon={<DocumentArrowDownIcon className="w-8 h-8 text-blue-500" />}
+                    icon={<CheckCircleIcon className="w-8 h-8 text-blue-500" />}
                     action={() => navigateTo('orders', 'ready')}
                     actionLabel="Finalize Orders"
+                    borderClass="border-blue-500"
+                />
+                <DashboardStatCard
+                    title="Completed Orders"
+                    value={history.length}
+                    icon={<ArchiveIcon className="w-8 h-8 text-green-500" />}
+                    action={() => navigateTo('orders', 'history')}
+                    actionLabel="View History"
+                    borderClass="border-green-500"
                 />
                  <DashboardStatCard
-                    title="Active Tasks"
+                    title="Pending Tasks"
                     value={pendingTasks}
-                    icon={<ClipboardCheckIcon className="w-8 h-8 text-green-500" />}
+                    icon={<ClockIcon className="w-8 h-8 text-teal-500" />}
                     action={() => navigateTo('tasks')}
-                    actionLabel="Task Board"
+                    actionLabel="Manage Tasks"
+                    borderClass="border-teal-500"
                 />
-                 <DashboardStatCard
+                <DashboardStatCard
+                    title="Total Contacts"
+                    value={contacts.length}
+                    icon={<UsersIcon className="w-8 h-8 text-indigo-500" />}
+                    action={() => navigateTo('contacts')}
+                    actionLabel="Manage Contacts"
+                    borderClass="border-indigo-500"
+                />
+                <DashboardStatCard
+                    title="Training Registrations"
+                    value={trainings.length}
+                    icon={<AcademicCapIcon className="w-8 h-8 text-purple-500" />}
+                    action={() => navigateTo('training')}
+                    actionLabel="View Registrations"
+                    borderClass="border-purple-500"
+                />
+                <DashboardStatCard
+                    title="Received Letters"
+                    value={letters.length}
+                    icon={<EnvelopeIcon className="w-8 h-8 text-orange-500" />}
+                    action={() => navigateTo('letters')}
+                    actionLabel="View Letters"
+                    borderClass="border-orange-500"
+                />
+                {/* Keeping Revenue as an extra card to balance the grid */}
+                <DashboardStatCard
                     title="Total Revenue"
                     value={`${(totalRevenue / 1000).toFixed(1)}k`}
-                    icon={<CurrencyDollarIcon className="w-8 h-8 text-purple-500" />}
+                    icon={<CurrencyDollarIcon className="w-8 h-8 text-gray-500" />}
                     action={() => navigateTo('reports')}
                     actionLabel="View Reports"
+                    borderClass="border-gray-500"
                 />
             </div>
             
