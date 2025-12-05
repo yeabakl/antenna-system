@@ -1,4 +1,3 @@
-
 import React, { useState, useContext, useEffect, useMemo } from 'react';
 import { AppContext } from '../App';
 import { Product } from '../types';
@@ -272,7 +271,7 @@ const FilterSidebar: React.FC<{
                         <div key={label}>
                             <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">{label}</h4>
                             <div className="space-y-2">
-                                {values.map(val => {
+                                {(values as string[]).map(val => {
                                     const isActive = activeFilters[label]?.includes(val);
                                     return (
                                         <label key={val} className="flex items-center gap-2 cursor-pointer group">

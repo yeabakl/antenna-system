@@ -101,3 +101,27 @@ export interface Product {
   useCases: string[];
   troubleshooting: string; // Markdown or plain text
 }
+
+// --- Inventory System Types ---
+
+export type InventoryStatus = 'Inbound' | 'Quarantine' | 'Available' | 'Reserved' | 'DeadStock';
+export type HazardType = 'None' | 'Flammable' | 'Corrosive' | 'Toxic';
+
+export interface InventoryItem {
+  id: string;
+  productId: string; // Links to Product
+  sku: string;
+  name: string; // Denormalized for easier display
+  locationZone: string; // e.g., 'Zone A', 'Quarantine', 'Receiving'
+  locationBin: string; // e.g., 'A-01-05'
+  quantityOnHand: number;
+  quantityReserved: number;
+  reorderPoint: number;
+  status: InventoryStatus;
+  weightKg: number; // For Heavy Lifting Alerts
+  hazardType: HazardType; // For Bluebird Governance
+  lastMovementDate: string; // For Dead Stock Analysis
+  supplier?: string;
+  batchNumber?: string;
+  expiryDate?: string; // For FEFO
+}

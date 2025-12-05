@@ -1,7 +1,7 @@
 
 import React, { useState, createContext, useEffect } from 'react';
-import { Order, Contact, Training, Letter, Task, Payment, Product } from './types';
-import { sampleOrders, sampleHistory, sampleContacts, sampleTrainings, sampleLetters, sampleTasks, sampleProducts } from './data';
+import { Order, Contact, Training, Letter, Task, Payment, Product, InventoryItem } from './types';
+import { sampleOrders, sampleHistory, sampleContacts, sampleTrainings, sampleLetters, sampleTasks, sampleProducts, sampleInventory } from './data';
 
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -14,6 +14,7 @@ import Tasks from './components/Tasks';
 import Reports from './components/Reports';
 import Products from './components/Products';
 import SettingsModal from './components/SettingsModal';
+import Inventory from './components/Inventory';
 
 interface AppContextType {
     orders: Order[];
@@ -23,6 +24,7 @@ interface AppContextType {
     letters: Letter[];
     tasks: Task[];
     products: Product[];
+    inventory: InventoryItem[];
     machineTypes: string[];
     orderPrefill: Partial<Order> | null;
     trainingPrefill: string | null;
@@ -42,6 +44,7 @@ interface AppContextType {
     addProduct: (product: Omit<Product, 'id'>) => void;
     updateProduct: (product: Product) => void;
     deleteProduct: (productId: string) => void;
+    updateInventoryItem: (item: InventoryItem) => void;
     addMachineType: (type: string) => void;
     navigateTo: (page: string, subPage?: string) => void;
     setOrderPrefill: (data: Partial<Order> | null) => void;
@@ -56,6 +59,7 @@ export const AppContext = createContext<AppContextType>({
     letters: [],
     tasks: [],
     products: [],
+    inventory: [],
     machineTypes: [],
     orderPrefill: null,
     trainingPrefill: null,
@@ -75,6 +79,7 @@ export const AppContext = createContext<AppContextType>({
     addProduct: () => {},
     updateProduct: () => {},
     deleteProduct: () => {},
+    updateInventoryItem: () => {},
     addMachineType: () => {},
     navigateTo: () => {},
     setOrderPrefill: () => {},
@@ -124,6 +129,10 @@ const App: React.FC = () => {
     const [products, setProducts] = useState<Product[]>(() => {
         const saved = localStorage.getItem('products');
         return saved ? JSON.parse(saved) : sampleProducts;
+    });
+    const [inventory, setInventory] = useState<InventoryItem[]>(() => {
+        const saved = localStorage.getItem('inventory');
+        return saved ? JSON.parse(saved) : sampleInventory;
     });
 
     const [machineTypes, setMachineTypes] = useState<string[]>(() => {
@@ -177,6 +186,7 @@ const App: React.FC = () => {
     useEffect(() => { localStorage.setItem('letters', JSON.stringify(letters)); }, [letters]);
     useEffect(() => { localStorage.setItem('tasks', JSON.stringify(tasks)); }, [tasks]);
     useEffect(() => { localStorage.setItem('products', JSON.stringify(products)); }, [products]);
+    useEffect(() => { localStorage.setItem('inventory', JSON.stringify(inventory)); }, [inventory]);
     useEffect(() => { localStorage.setItem('machineTypes', JSON.stringify(machineTypes)); }, [machineTypes]);
     
     // Notification Logic
@@ -320,6 +330,10 @@ const App: React.FC = () => {
     const deleteProduct = (productId: string) => {
         setProducts(prev => prev.filter(p => p.id !== productId));
     };
+
+    const updateInventoryItem = (updatedItem: InventoryItem) => {
+        setInventory(prev => prev.map(item => item.id === updatedItem.id ? updatedItem : item));
+    };
     
     const addMachineType = (type: string) => {
         if (type && !machineTypes.includes(type)) {
@@ -342,6 +356,7 @@ const App: React.FC = () => {
             case 'letters': return <Letters />;
             case 'reports': return <Reports />;
             case 'products': return <Products />;
+            case 'inventory': return <Inventory />;
             default: return <Dashboard />;
         }
     };
@@ -354,6 +369,7 @@ const App: React.FC = () => {
         letters,
         tasks,
         products,
+        inventory,
         machineTypes,
         orderPrefill,
         trainingPrefill,
@@ -373,6 +389,7 @@ const App: React.FC = () => {
         addProduct,
         updateProduct,
         deleteProduct,
+        updateInventoryItem,
         addMachineType,
         navigateTo,
         setOrderPrefill,

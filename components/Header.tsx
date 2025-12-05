@@ -30,6 +30,7 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, onOpenSettings, activePage 
   const navItems = [
     { id: 'home', label: 'Dashboard' },
     { id: 'orders', label: 'Orders' },
+    { id: 'inventory', label: 'Inventory' },
     { id: 'tasks', label: 'Tasks' },
     { id: 'contacts', label: 'Contacts' },
     { id: 'training', label: 'Training' },

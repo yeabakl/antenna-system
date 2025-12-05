@@ -1,5 +1,5 @@
 
-import { Order, Contact, Training, Letter, Task, Product } from './types';
+import { Order, Contact, Training, Letter, Task, Product, InventoryItem } from './types';
 
 // --- Base64 Placeholder Data ---
 // A simple 16x16 pixel placeholder image
@@ -694,5 +694,89 @@ export const sampleProducts: Product[] = [
         specifications: [{label: 'Duration', value: '4 Days'}, {label: 'Level', value: 'Beginner'}],
         useCases: ['Packaging Business'],
         troubleshooting: ''
+    }
+];
+
+// --- Sample Inventory Data (IMS Phase 1 & 2) ---
+export const sampleInventory: InventoryItem[] = [
+    // Inbound
+    {
+        id: 'inv-001',
+        productId: 'rm1', // Caustic Soda
+        sku: 'CHEM-CS-001',
+        name: 'Caustic Soda Flakes (Incoming Batch)',
+        locationZone: 'Receiving Dock',
+        locationBin: 'DK-01',
+        quantityOnHand: 100, // Bags
+        quantityReserved: 0,
+        reorderPoint: 50,
+        status: 'Inbound',
+        weightKg: 25,
+        hazardType: 'Corrosive',
+        lastMovementDate: '2023-10-25',
+        batchNumber: 'BATCH-2023-X1',
+        expiryDate: '2025-10-25'
+    },
+    // Quarantine (Needs QC)
+    {
+        id: 'inv-002',
+        productId: 'p6', // Plastic Crusher
+        sku: 'MACH-PCS-1500-01',
+        name: 'Plastic Crusher (Awaiting Inspection)',
+        locationZone: 'Quarantine Area',
+        locationBin: 'Q-A-01',
+        quantityOnHand: 1,
+        quantityReserved: 0,
+        reorderPoint: 1,
+        status: 'Quarantine',
+        weightKg: 450, // Heavy lift
+        hazardType: 'None',
+        lastMovementDate: '2023-10-24',
+    },
+    // Available Stock (Storage)
+    {
+        id: 'inv-003',
+        productId: 'p1-a', // Bar Soap Machine Standard
+        sku: 'MACH-BSM-100-05',
+        name: 'Bar Soap Machine (Standard)',
+        locationZone: 'Zone A (Machines)',
+        locationBin: 'A-02-01',
+        quantityOnHand: 2,
+        quantityReserved: 0,
+        reorderPoint: 1,
+        status: 'Available',
+        weightKg: 300,
+        hazardType: 'None',
+        lastMovementDate: '2023-09-15',
+    },
+    {
+        id: 'inv-004',
+        productId: 'rm2', // HDPE Pellets
+        sku: 'PLAS-HDPE-005',
+        name: 'HDPE Pellets (Bulk)',
+        locationZone: 'Zone B (Raw Mat)',
+        locationBin: 'B-05-10',
+        quantityOnHand: 15, // Low stock simulation (if reorder is 20)
+        quantityReserved: 0,
+        reorderPoint: 20,
+        status: 'Available',
+        weightKg: 25,
+        hazardType: 'None',
+        lastMovementDate: '2023-08-01', // Potential dead stock
+    },
+    {
+        id: 'inv-005',
+        productId: 'p15', // Oil Press
+        sku: 'MACH-OP-50-02',
+        name: 'Screw Oil Press',
+        locationZone: 'Zone A (Machines)',
+        locationBin: 'A-03-02',
+        quantityOnHand: 1,
+        quantityReserved: 1, // Reserved
+        reorderPoint: 1,
+        status: 'Reserved',
+        weightKg: 150,
+        hazardType: 'None',
+        lastMovementDate: '2023-10-20',
     }
 ];
